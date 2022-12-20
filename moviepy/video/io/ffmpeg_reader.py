@@ -37,6 +37,7 @@ class FFMPEG_VideoReader:
         )
         self.fps = infos["video_fps"]
         self.size = infos["video_size"]
+        self.codec = infos["video_codec"]
 
         # ffmpeg automatically rotates videos if rotation information is
         # available, so exchange width and height
@@ -422,7 +423,7 @@ class FFmpegInfosParser:
 
                 # get input number, stream number, language and type
                 main_info_match = re.search(
-                    r"^Stream\s#(\d+):(\d+)(?:\[\w+\])?\(?(\w+)?\)?:\s(\w+):",
+                    r"^Stream\s#(\d+):(\d+)(?:\[\w+\])?\(?(\w+)?\)?:\s(\w+):\s(\w+)",
                     line.lstrip(),
                 )
                 (
@@ -430,6 +431,7 @@ class FFmpegInfosParser:
                     stream_number,
                     language,
                     stream_type,
+                    codec,
                 ) = main_info_match.groups()
                 input_number = int(input_number)
                 stream_number = int(stream_number)
@@ -444,6 +446,7 @@ class FFmpegInfosParser:
                     "stream_number": stream_number,
                     "stream_type": stream_type_lower,
                     "language": language,
+                    "codec": codec,
                     "default": not self._default_stream_found
                     or line.endswith("(default)"),
                 }
@@ -653,6 +656,8 @@ class FFmpegInfosParser:
         match_bitrate = re.search(r"(\d+) kb/s", line)
         stream_data["bitrate"] = int(match_bitrate.group(1)) if match_bitrate else None
 
+        stream_data["codec"] = re.search(r"Video:\s(\w+)", line).group(1)
+
         # Get the frame rate. Sometimes it's 'tbr', sometimes 'fps', sometimes
         # tbc, and sometimes tbc/2...
         # Current policy: Trust fps first, then tbr unless fps_source is
@@ -691,6 +696,8 @@ class FFmpegInfosParser:
             global_data["video_bitrate"] = stream_data.get("bitrate", None)
         if self._current_stream["default"] or "video_fps" not in self.result:
             global_data["video_fps"] = stream_data["fps"]
+        if self._current_stream["default"] or "video_codec" not in self.result:
+            global_data["video_codec"] = stream_data["codec"]
 
         return (global_data, stream_data)
 
@@ -759,6 +766,7 @@ def ffmpeg_parse_infos(
     - ``"video_n_frames"``
     - ``"video_duration"``
     - ``"video_bitrate"``
+    - ``"video_codec"``
     - ``"video_metadata"``
     - ``"audio_found"``
     - ``"audio_fps"``

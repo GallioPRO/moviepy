@@ -381,6 +381,7 @@ At least one output file must be specified
     assert d["video_fps"] == 24
     assert d["video_n_frames"] == 3136
     assert d["video_size"] == [768, 576]
+    assert d["video_codec"] == "mjpeg"
     assert d["start"] == 0
     assert d["default_audio_input_number"] == 0
     assert d["default_audio_stream_number"] == 1
@@ -444,6 +445,7 @@ stDim:unit="pixel"/>
     assert streams[0]["stream_number"] == 0
     assert streams[0]["stream_type"] == "video"
     assert streams[0]["size"] == [768, 576]
+    assert streams[0]["codec"] == "mjpeg"
 
     assert streams[0]["metadata"]["creation_time"] == "2015-09-14 14:57:32"
     assert streams[0]["metadata"]["encoder"] == "Photo - JPEG"
@@ -457,6 +459,7 @@ stDim:unit="pixel"/>
     assert streams[1]["language"] == "eng"
     assert streams[1]["stream_number"] == 1
     assert streams[1]["stream_type"] == "audio"
+    assert streams[1]["codec"] == "aac"
 
     assert streams[1]["metadata"]["creation_time"] == "2015-09-14 14:57:33"
     assert streams[1]["metadata"]["timecode"] == "00:00:00:00"
@@ -468,6 +471,7 @@ stDim:unit="pixel"/>
     assert streams[2]["language"] == "eng"
     assert streams[2]["stream_number"] == 2
     assert streams[2]["stream_type"] == "data"
+    assert streams[2]["codec"] == "none"
 
     assert streams[2]["metadata"]["creation_time"] == "2015-09-14 14:58:24"
     assert streams[2]["metadata"]["timecode"] == "00:00:00:00"
@@ -479,7 +483,7 @@ def test_not_default_audio_stream_audio_bitrate():
   Metadata:
     encoder         : Lavf57.19.100
   Duration: 00:00:30.61, start: 0.000000, bitrate: 387 kb/s
-    Stream #0:0: Video: ..., 30 tbr, 60 tbc
+    Stream #0:0: Video: h264, ..., 30 tbr, 60 tbc
     Stream #0:1: Audio: aac (LC) (...), 48000 Hz, stereo, fltp, 139 kb/s
 """
 
@@ -499,7 +503,7 @@ def test_stream_deidentation_not_raises_error():
     compatible_brands: isomiso2avc1mp41
     encoder         : Lavf58.12.100
   Duration: 01:00:00.00, start: 0.000000, bitrate: 1222 kb/s
-  Stream #0:0(und): Video: ..., 30 tbr, 60 tbc
+  Stream #0:0(und): Video: h264, ..., 30 tbr, 60 tbc
     Metadata:
       handler_name    : VideoHandler
       vendor_id       : [0][0][0][0]
@@ -515,7 +519,7 @@ def test_stream_square_brackets():
     infos = """
 Input #0, mpeg, from 'clip.mp4':
   Duration: 00:02:15.00, start: 52874.498178, bitrate: 266 kb/s
-    Stream #0:0[0x1e0]: Video: ..., 25 tbr, 90k tbn, 50 tbc
+    Stream #0:0[0x1e0]: Video: h264, ..., 25 tbr, 90k tbn, 50 tbc
     Stream #0:1[0x1c0]: Audio: mp2, 0 channels, s16p
 At least one output file must be specified"""
 
@@ -531,7 +535,7 @@ def test_stream_square_brackets_and_language():
     infos = """
 Input #0, mpeg, from 'clip.mp4':
   Duration: 00:02:15.00, start: 52874.498178, bitrate: 266 kb/s
-    Stream #0:0[0x1e0](eng): Video: ..., 25 tbr, 90k tbn, 50 tbc
+    Stream #0:0[0x1e0](eng): Video: h264, ..., 25 tbr, 90k tbn, 50 tbc
     Stream #0:1[0x1c0](und): Audio: mp2, 0 channels, s16p
 At least one output file must be specified"""
 
@@ -547,7 +551,7 @@ def test_stream_missing_audio_bitrate():
     infos = """
 Input #0, mpeg, from 'clip.mp4':
   Duration: 00:02:15.00, start: 52874.498178, bitrate: 266 kb/s
-    Stream #0:0[0x1e0]: Video: ..., 25 tbr, 90k tbn, 50 tbc
+    Stream #0:0[0x1e0]: Video: h264, ..., 25 tbr, 90k tbn, 50 tbc
     Stream #0:1[0x1c0]: Audio: mp2, 0 channels, s16p
 At least one output file must be specified"""
 
