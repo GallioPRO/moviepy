@@ -68,7 +68,7 @@ if "build_docs" in sys.argv:
 
 __version__ = None
 with open(os.path.join("moviepy", "version.py"), "r", "utf-8") as f:
-    __version__ = f.read().split(" ")[2].strip("\n").strip('"')
+    __version__ = f.read().split(" ")[2].strip("\n").strip("\r").strip('"')
 
 
 # Define the requirements for specific execution needs.
